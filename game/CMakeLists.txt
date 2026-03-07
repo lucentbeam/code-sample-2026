@@ -1,0 +1,25 @@
+add_executable(game
+	main.cpp
+        manager.h manager.cpp
+        states.h
+        constants.h
+
+        title/title.h title/title.cpp
+
+        game/game.h game/game.cpp
+        game/marblepool.h game/marblepool.cpp
+        game/wall.h game/wall.cpp
+        game/marble.h game/marble.cpp
+        game/physicsbody.h game/physicsbody.cpp
+        game/player.h game/player.cpp
+
+        gameover/gameover.h gameover/gameover.cpp
+
+        utils/fsm.h utils/fsm.cpp
+	)
+
+target_link_libraries(game PRIVATE core)
+
+target_include_directories(game PRIVATE
+    ${CMAKE_SOURCE_DIR}/game/
+)
