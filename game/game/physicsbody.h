@@ -9,7 +9,8 @@ class PhysicsBody
     Vec2 position;
 
 public:
-    PhysicsBody(Vec2 p) : previous(p), position(p) {}
+    PhysicsBody(Vec2 pos) : previous(pos), position(pos) {}
+    PhysicsBody(Vec2 pos, Vec2 vel) : previous(pos - vel), position(pos) {}
     PhysicsBody(double x = 0, double y = 0) : PhysicsBody(Vec2(x,y)) {}
 
     Vec2 getPrevious() const;

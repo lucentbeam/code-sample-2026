@@ -7,6 +7,7 @@
 
 #include "game/player.h"
 #include "game/marblepool.h"
+#include "game/launcher.h"
 
 #include "game/collisiondetection.h"
 
@@ -18,6 +19,8 @@ namespace {
     MarblePool marbles;
 
     std::vector<Line> walls;
+
+    Launcher launcher(&marbles, Vec2(arena_cx, arena_cy - arena_radius), Vec2(0, 1));
 
     bool init = false;
 }
@@ -36,26 +39,16 @@ void Game::update(FSM &fsm)
             walls.push_back(Line(v1, v2));
         }
 
-        init = true;
+        launcher.start();
 
-        for(int i = 0; i < 40; ++i) {
-            Vec2 p = center + Vec2(double(rand() % 360)) * (arena_radius * 0.25 + double(rand() % int(arena_radius * 0.5)));
-            MarblePool::Handle h = marbles.create(p.x, p.y);
-            marbles.get(h, [](Marble &m){
-                const double speed = 3.0;
-                double vx = rand() % 100;
-                vx = ((vx / 100) - 0.5) * marble_speed * speed;
-                double vy = rand() % 100;
-                vy = ((vy / 100) - 0.5) * marble_speed * speed;
-                m.body.move(Vec2(vx, vy));
-            });
-        }
+        init = true;
     }
     if (Controls::get("action").pressed()) {
         fsm.go(GameoverScreen);
         return;
     }
 
+    launcher.update();
     player.update();
 
     std::vector<Circle> circles;
@@ -67,6 +60,7 @@ void Game::draw(FSM &)
 {
     Window::print("gameplay", 0, 0);
 
+    launcher.draw();
     marbles.draw();
     player.draw();
 }

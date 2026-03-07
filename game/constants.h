@@ -11,8 +11,8 @@ constexpr int starting_window_scale = 3;
 // physics properties
 constexpr double arena_radius = (resolution_y - 5)/2;
 
-constexpr double player_speed_pixels_per_second = 80;
-constexpr double marble_speed_pixels_per_second = 20;
+constexpr double player_speed_pixels_per_second = 120;
+constexpr double marble_speed_pixels_per_second = 60;
 
 constexpr double player_radius = 4;
 constexpr double marble_radius = 1.5;

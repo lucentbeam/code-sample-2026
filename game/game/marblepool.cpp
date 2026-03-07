@@ -28,7 +28,7 @@ MarblePool::MarblePool()
 
 }
 
-MarblePool::Handle MarblePool::create(double x, double y)
+MarblePool::Handle MarblePool::create(Vec2 position, Vec2 velocity)
 {
     if (availableCount() == 0) grow(64);
 
@@ -40,7 +40,7 @@ MarblePool::Handle MarblePool::create(double x, double y)
     h.generation = ++slots[idx].generation;
     slots[idx].active = true;
 
-    marbles[idx].body = PhysicsBody(x, y);
+    marbles[idx].body = PhysicsBody(position, velocity);
 
     return h;
 }

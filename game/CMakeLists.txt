@@ -13,11 +13,13 @@ add_executable(game
         game/physicsbody.h game/physicsbody.cpp
         game/player.h game/player.cpp
         game/collisiondetection.h game/collisiondetection.cpp
+        game/launcher.h game/launcher.cpp
 
         gameover/gameover.h gameover/gameover.cpp
 
         utils/fsm.h utils/fsm.cpp
         utils/animation.h utils/animation.cpp
+        utils/clock.h utils/clock.cpp
 	)
 
 target_link_libraries(game PRIVATE core)
