@@ -27,17 +27,22 @@ void Game::update(FSM &fsm)
     if (!init) {
         player.init();
 
-        walls.push_back(Line({10,10},     {230,10}));
-        walls.push_back(Line({10,170},   {10,10}));
-        walls.push_back(Line({230,10},   {230,170}));
-        walls.push_back(Line({230,170}, {10,170}));
+        constexpr int wallcount = 20;
+        constexpr double step_size = 360 / wallcount;
+        constexpr Vec2 center(arena_cx, arena_cy);
+        for(int i = 0; i < 20; ++i) {
+            Vec2 v1 = center + Vec2(double(i + 0) * step_size - 1) * arena_radius;
+            Vec2 v2 = center + Vec2(double(i + 1) * step_size + 1) * arena_radius;
+            walls.push_back(Line(v1, v2));
+        }
 
         init = true;
 
         for(int i = 0; i < 1500; ++i) {
-            MarblePool::Handle h = marbles.create(40 + (rand() % 160), 40 + (rand() % 100));
+            Vec2 p = center + Vec2(double(rand() % 360)) * (arena_radius * 0.25 + double(rand() % int(arena_radius * 0.5)));
+            MarblePool::Handle h = marbles.create(p.x, p.y);
             marbles.get(h, [](Marble &m){
-                const double speed = 5.0;
+                const double speed = 3.0;
                 double vx = rand() % 100;
                 vx = ((vx / 100) - 0.5) * marble_speed * speed;
                 double vy = rand() % 100;

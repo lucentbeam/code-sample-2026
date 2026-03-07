@@ -4,11 +4,14 @@
 struct Vec2 {
     double x, y;
 
-    // vector constructor
-    constexpr Vec2(double x = 0, double y = 0) : x(x), y(y) {}
+    // default constructor
+    constexpr Vec2() : x(0), y(0) {}
 
     // angle constructor
     Vec2(double angle_degrees);
+
+    // vector constructor
+    constexpr Vec2(double x, double y) : x(x), y(y) {}
 
     // operator overloads
     constexpr Vec2 operator+(const Vec2& other) const { return Vec2(x + other.x, y + other.y); }

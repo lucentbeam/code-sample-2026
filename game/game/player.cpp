@@ -8,7 +8,7 @@
 
 void Player::init()
 {
-    body = PhysicsBody(32, 32);
+    body = PhysicsBody(arena_cx, arena_cy);
     collider.radius = player_radius;
 }
 
