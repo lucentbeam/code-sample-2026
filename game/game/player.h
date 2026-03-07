@@ -7,11 +7,13 @@
 #include "game/physicsbody.h"
 
 #include "game/collisiondetection.h"
+#include "utils/animation.h"
 
 class Player
 {
-    PhysicsBody body;
-    mutable Circle collider;
+    AnimatedSprite m_sprite;
+    PhysicsBody m_body;
+    mutable Circle m_collider;
 
 public:
     void init();

@@ -17,6 +17,7 @@ add_executable(game
         gameover/gameover.h gameover/gameover.cpp
 
         utils/fsm.h utils/fsm.cpp
+        utils/animation.h utils/animation.cpp
 	)
 
 target_link_libraries(game PRIVATE core)

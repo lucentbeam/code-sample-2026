@@ -16,7 +16,7 @@ constexpr double arena_cy = resolution_y / 2;
 constexpr double player_speed_pixels_per_second = 60;
 constexpr double marble_speed_pixels_per_second = 20;
 
-constexpr double player_radius = 10;
+constexpr double player_radius = 12;
 constexpr double marble_radius = 1.5;
 
 // derived/helper properties
