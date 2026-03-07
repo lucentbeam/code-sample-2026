@@ -12,7 +12,9 @@ public:
     PhysicsBody(Vec2 p) : previous(p), position(p) {}
     PhysicsBody(double x = 0, double y = 0) : PhysicsBody(Vec2(x,y)) {}
 
-    Vec2 getPosition(bool interpolated = false) const;
+    Vec2 getPrevious() const;
+    Vec2 getPosition() const;
+    Vec2 getInterpolatedPosition() const;
     void setPosition(const Vec2 &position);
 
     Vec2 getVelocity() const;

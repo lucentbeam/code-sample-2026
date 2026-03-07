@@ -3,20 +3,24 @@
 #include "core/system.h"
 #include "constants.h"
 
-Vec2 PhysicsBody::getPosition(bool interpolated) const
+Vec2 PhysicsBody::getPrevious() const
 {
-    if (interpolated) {
-        return System::frameInterpolate(previous, position);
-    } else {
-        return position;
-    }
+    return previous;
+}
+
+Vec2 PhysicsBody::getPosition() const
+{
+    return position;
+}
+
+Vec2 PhysicsBody::getInterpolatedPosition() const
+{
+    return System::frameInterpolate(previous, position);
 }
 
 void PhysicsBody::setPosition(const Vec2 &p)
 {
-    Vec2 delta = p - position;
     position = p;
-    previous += delta;
 }
 
 Vec2 PhysicsBody::getVelocity() const

@@ -9,6 +9,7 @@
 void Player::init()
 {
     body = PhysicsBody(32, 32);
+    collider.radius = player_radius;
 }
 
 void Player::update()
@@ -24,8 +25,14 @@ void Player::draw()
     settings.setTiled(0, 5, 1);
     Window::setDrawSettings(settings);
 
-    Vec2 pos = body.getPosition(true);
+    Vec2 pos = body.getInterpolatedPosition();
     Window::draw("player", pos.x, pos.y, 0);
 
     Window::setDrawSettings();
+}
+
+Circle Player::getCollider() const
+{
+    collider.center = body.getPosition();
+    return collider;
 }

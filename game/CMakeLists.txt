@@ -12,6 +12,7 @@ add_executable(game
         game/marble.h game/marble.cpp
         game/physicsbody.h game/physicsbody.cpp
         game/player.h game/player.cpp
+        game/collisiondetection.h game/collisiondetection.cpp
 
         gameover/gameover.h gameover/gameover.cpp
 

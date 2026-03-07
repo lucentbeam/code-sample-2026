@@ -29,9 +29,22 @@ struct Vec2 {
 
     constexpr Vec2 operator*(const Vec2& other) const { return Vec2(x * other.x, y * other.y); }
 
+    constexpr Vec2& operator*=(double value) {
+        x *= value;
+        y *= value;
+        return *this;
+    }
+
     constexpr Vec2 operator*(double value) const { return Vec2(x * value, y * value); }
 
     constexpr Vec2 operator/(const Vec2& other) const { return Vec2(x / other.x, y / other.y); }
+
+    constexpr Vec2& operator/=(double value) {
+        // TODO: evaluate whether this should check for divide by zero errors
+        x /= value;
+        y /= value;
+        return *this;
+    }
 
     constexpr Vec2 operator/(double value) const { return Vec2(x / value, y / value); }
 

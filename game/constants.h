@@ -12,6 +12,9 @@ constexpr int starting_window_scale = 3;
 constexpr double player_speed_pixels_per_second = 60;
 constexpr double marble_speed_pixels_per_second = 20;
 
+constexpr double player_radius = 10;
+constexpr double marble_radius = 3;
+
 // derived/helper properties
 constexpr double player_speed = player_speed_pixels_per_second * physics_timestep;
 constexpr double marble_speed = marble_speed_pixels_per_second * physics_timestep;

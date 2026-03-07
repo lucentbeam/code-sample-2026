@@ -5,6 +5,8 @@
 #include "core/system.h"
 #include "core/window.h"
 
+#include "constants.h"
+
 void MarblePool::grow(int count)
 {
     size_t current_count = marbles.size();
@@ -43,7 +45,7 @@ MarblePool::Handle MarblePool::create(double x, double y)
     return h;
 }
 
-void MarblePool::release(const Handle &handle)
+void MarblePool::release(const Handle& handle)
 {
     if (handle.id < 0 || handle.id >= int(slots.size())) {
         return;
@@ -56,7 +58,7 @@ void MarblePool::release(const Handle &handle)
     }
 }
 
-void MarblePool::get(const Handle &handle, std::function<void (Marble&)> callback)
+void MarblePool::get(const Handle& handle, std::function<void (Marble&)> callback)
 {
     if (handle.id < 0 || handle.id >= int(slots.size())) {
         return;
@@ -68,25 +70,46 @@ void MarblePool::get(const Handle &handle, std::function<void (Marble&)> callbac
     }
 }
 
-void MarblePool::update(const std::vector<Wall> &walls)
+void MarblePool::update(const std::vector<Line>& walls, const std::vector<Circle>& objects)
 {
     auto body_it = marbles.begin();
     auto slot_it = slots.begin();
-    int ct = 0;
+
+    Circle collider;
+    collider.radius = marble_radius;
+
     while(body_it != marbles.end() && slot_it != slots.end()) {
         if (slot_it->active) {
             body_it->body.verletUpdate();
-            Vec2 pos = body_it->body.getPosition(false);
+            collider.center = body_it->body.getPosition();
             body_it->body.setVelocity(body_it->body.getVelocity());
 
-            for (const Wall &wall : walls) {
-                WallNearestLoc wc = wall.getNearest(pos);
-                if (wc.distance < 3 && wc.wall_location_to_point.dot(wc.wall_normal) < 0) {
+            /* Note:
+             *  These collision resolution algorithms are highly simplified for the scope of this sample.
+             *  They do not account for previous positions, and therefore phasing is possible.
+             *  In addition, they resolve collisions instantly rather that resolving multi-body
+             *  collisions.
+             */
+            for (const Circle& object : objects) {
+                CollisionInfo c = CollisionDetection::circleCircle(collider, object);
+                if (c.collides) {
                     Vec2 vel = body_it->body.getVelocity();
-                    double dot = vel.dot(wc.wall_normal);
+                    double dot = vel.dot(c.normal);
+                    body_it->body.setPosition(c.contact_point + c.normal * collider.radius);
                     if (dot < 0) {
-                        body_it->body.setPosition(wc.wall_location);
-                        body_it->body.setVelocity(vel - wc.wall_normal * dot * 2);
+                        body_it->body.setVelocity(vel - c.normal * dot * 2);
+                    }
+                    body_it->id = 1;
+                }
+            }
+            for (const Line& wall : walls) {
+                CollisionInfo c = CollisionDetection::circleLine(collider, wall);
+                if (c.collides) {
+                    Vec2 vel = body_it->body.getVelocity();
+                    double dot = vel.dot(c.normal);
+                    if (dot < 0) {
+                        body_it->body.setPosition(c.contact_point + c.normal * collider.radius);
+                        body_it->body.setVelocity(vel - c.normal * dot * 2);
                     }
                     body_it->id = 1;
                 }
@@ -94,7 +117,6 @@ void MarblePool::update(const std::vector<Wall> &walls)
         }
         body_it++;
         slot_it++;
-        ct++;
     }
 }
 
@@ -111,7 +133,7 @@ void MarblePool::draw()
 
     while(body_it != marbles.end() && slot_it != slots.end()) {
         if (slot_it->active) {
-            Vec2 p = body_it->body.getPosition(true);
+            Vec2 p = body_it->body.getInterpolatedPosition();
             settings.tile_id = body_it->id;
             Window::setDrawSettings(settings);
             Window::drawBound(p.x, p.y, 0);

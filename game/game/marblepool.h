@@ -9,6 +9,8 @@
 #include "game/marble.h"
 #include "game/wall.h"
 
+#include "game/collisiondetection.h"
+
 class MarblePool {
     struct Slot {
         size_t generation = 0;
@@ -34,11 +36,11 @@ public:
 
     Handle create(double x, double y);
 
-    void release(const Handle &handle);
+    void release(const Handle& handle);
 
-    void get(const Handle &handle, std::function<void(Marble&)> callback);
+    void get(const Handle& handle, std::function<void(Marble&)> callback);
 
-    void update(const std::vector<Wall> &walls);
+    void update(const std::vector<Line>& walls, const std::vector<Circle>& objects);
 
     void draw();
 };
