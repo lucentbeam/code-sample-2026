@@ -24,6 +24,8 @@ public:
     bool done() const;
 
     double doneDuration() const;
+
+    double fraction() const;
 };
 
 class AnimatedSprite
@@ -34,7 +36,7 @@ class AnimatedSprite
         bool auto_transition = false;
     };
 
-    std::unordered_map<int, AnimationState> m_animations;
+    std::unordered_map<int, AnimationState> m_states;
 
     int m_current;
 public:
@@ -46,6 +48,7 @@ public:
 
     int currentState();
     int frame();
+    double fraction() const;
 };
 
 

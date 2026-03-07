@@ -34,14 +34,7 @@ void Animation::reset(double offset)
 
 int Animation::frame() const
 {
-    double frac = std::chrono::duration<double>(std::chrono::steady_clock::now() - m_start).count() / m_duration;
-
-    if (m_looping) {
-        frac = std::fmod(frac, 1);
-    } else {
-        frac = std::fmin(frac, 0.9999);
-    }
-    return m_frames[size_t(frac * double(m_frames.size()))];
+    return m_frames[size_t(fraction() * double(m_frames.size()))];
 }
 
 bool Animation::done() const
@@ -54,30 +47,41 @@ double Animation::doneDuration() const
     return std::chrono::duration<double>(std::chrono::steady_clock::now() - m_start).count() - m_duration;
 }
 
+double Animation::fraction() const
+{
+    double frac = std::chrono::duration<double>(std::chrono::steady_clock::now() - m_start).count() / m_duration;
+    if (m_looping) {
+        frac = std::fmod(frac, 1);
+    } else {
+        frac = std::fmin(frac, 0.9999);
+    }
+    return frac;
+}
+
 void AnimatedSprite::bind(int id, const Animation& animation)
 {
-    m_animations.emplace(id, AnimationState());
-    m_animations[id].animation = animation;
-    m_animations[id].auto_transition = false;
+    m_states.emplace(id, AnimationState());
+    m_states[id].animation = animation;
+    m_states[id].auto_transition = false;
 
-    if (m_animations.size() == 1) m_current = id;
+    if (m_states.size() == 1) m_current = id;
 }
 
 void AnimatedSprite::bind(int id, const Animation& animation, int fallback_on_done)
 {
-    m_animations.emplace(id, AnimationState());
-    m_animations[id].animation = animation;
-    m_animations[id].auto_transition = fallback_on_done != id;
-    m_animations[id].transitions_to = fallback_on_done;
+    m_states.emplace(id, AnimationState());
+    m_states[id].animation = animation;
+    m_states[id].auto_transition = fallback_on_done != id;
+    m_states[id].transitions_to = fallback_on_done;
 
-    if (m_animations.size() == 1) m_current = id;
+    if (m_states.size() == 1) m_current = id;
 }
 
 void AnimatedSprite::go(int state, bool reset_if_same)
 {
     if (state == m_current && !reset_if_same) return;
-    auto it = m_animations.find(state);
-    if (it == m_animations.end()) {
+    auto it = m_states.find(state);
+    if (it == m_states.end()) {
         return;
     }
     m_current = state;
@@ -86,11 +90,11 @@ void AnimatedSprite::go(int state, bool reset_if_same)
 
 int AnimatedSprite::currentState()
 {
-    AnimationState state = m_animations.at(m_current);
+    AnimationState state = m_states.at(m_current);
     if (state.auto_transition && state.animation.done()) {
         double overflow = state.animation.doneDuration();
         m_current = state.transitions_to;
-        state = m_animations.at(m_current);
+        state = m_states.at(m_current);
         state.animation.reset(overflow);
     }
     return m_current;
@@ -98,7 +102,12 @@ int AnimatedSprite::currentState()
 
 int AnimatedSprite::frame()
 {
-    if (m_animations.size() == 0) return 0;
+    if (m_states.size() == 0) return 0;
 
-    return m_animations.at(currentState()).animation.frame();
+    return m_states.at(currentState()).animation.frame();
+}
+
+double AnimatedSprite::fraction() const
+{
+    return m_states.at(m_current).animation.fraction();
 }

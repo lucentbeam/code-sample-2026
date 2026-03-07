@@ -70,10 +70,18 @@ void MarblePool::get(const Handle& handle, std::function<void (Marble&)> callbac
     }
 }
 
-void MarblePool::update(const std::vector<Line>& walls, const std::vector<Circle>& objects)
+#include <iostream>
+void MarblePool::update(const std::vector<Line>& walls, const std::vector<Circle>& objects, const std::vector<Rect>& hitboxes)
 {
     auto body_it = marbles.begin();
     auto slot_it = slots.begin();
+    int slot_idx = 0;
+
+    auto increment = [&body_it, &slot_it, &slot_idx](){
+        body_it++;
+        slot_it++;
+        slot_idx++;
+    };
 
     Circle collider;
     collider.radius = marble_radius;
@@ -84,6 +92,21 @@ void MarblePool::update(const std::vector<Line>& walls, const std::vector<Circle
             collider.center = body_it->body.getPosition();
             body_it->body.setVelocity(body_it->body.getVelocity());
 
+            bool destroy = false;
+            for (const Rect& hb : hitboxes) {
+                if (CollisionDetection::overlapsRect(collider, hb)) {
+                    destroy = true;
+                    break;
+                }
+            }
+            if (destroy) {
+                slot_it->active = false;
+                available_slots.push(slot_idx);
+                std::cout << "champed!" << slot_idx << std::endl;
+                // do other stuff here
+                increment();
+                continue;
+            }
             /* Note:
              *  These collision resolution algorithms are highly simplified for the scope of this sample.
              *  They do not account for previous positions, and therefore phasing is possible.
@@ -115,8 +138,7 @@ void MarblePool::update(const std::vector<Line>& walls, const std::vector<Circle
                 }
             }
         }
-        body_it++;
-        slot_it++;
+        increment();
     }
 }
 

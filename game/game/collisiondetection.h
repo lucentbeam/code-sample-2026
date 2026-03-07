@@ -34,6 +34,11 @@ struct Line {
     Vec2 normal() const { return dir.right(); }
 };
 
+struct Rect {
+    Vec2 top_left;
+    Vec2 bottom_right;
+};
+
 class CollisionDetection
 {
 public:
@@ -41,7 +46,7 @@ public:
 
     static CollisionInfo circleCircle(const Circle& circle1, const Circle& circle2);
 
-    static bool overlapsRect(const Circle&, const Vec2 top_left, const Vec2& bottom_right);
+    static bool overlapsRect(const Circle&, const Rect&);
 };
 
 #endif // COLLISIONDETECTION_H

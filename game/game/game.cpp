@@ -38,7 +38,7 @@ void Game::update(FSM &fsm)
 
         init = true;
 
-        for(int i = 0; i < 1500; ++i) {
+        for(int i = 0; i < 40; ++i) {
             Vec2 p = center + Vec2(double(rand() % 360)) * (arena_radius * 0.25 + double(rand() % int(arena_radius * 0.5)));
             MarblePool::Handle h = marbles.create(p.x, p.y);
             marbles.get(h, [](Marble &m){
@@ -60,7 +60,7 @@ void Game::update(FSM &fsm)
 
     std::vector<Circle> circles;
     circles.push_back(player.getCollider());
-    marbles.update(walls, circles);
+    marbles.update(walls, circles, player.getHitBoxes());
 }
 
 void Game::draw(FSM &)

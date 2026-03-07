@@ -22,6 +22,7 @@ public:
     void draw();
 
     Circle getCollider() const;
+    std::vector<Rect> getHitBoxes();
 };
 
 #endif // PLAYER_H

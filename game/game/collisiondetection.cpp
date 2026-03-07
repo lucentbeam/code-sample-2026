@@ -47,7 +47,7 @@ CollisionInfo CollisionDetection::circleCircle(const Circle& circle1, const Circ
     return info;
 }
 
-bool CollisionDetection::overlapsRect(const Circle& circle, const Vec2 top_left, const Vec2& bottom_right)
+bool CollisionDetection::overlapsRect(const Circle& circle, const Rect& rect)
 {
     // modeled after https://jeffreythompson.org/collision-detection/circle-rect.php
 
@@ -56,23 +56,23 @@ bool CollisionDetection::overlapsRect(const Circle& circle, const Vec2 top_left,
     // temporary variable used to determine if circle.radius is needed
     bool outside = false;
 
-    if (circle.center.x < top_left.x) {
+    if (circle.center.x < rect.top_left.x) {
         // left edge
-        nearest_edge.x = top_left.x;
+        nearest_edge.x = rect.top_left.x;
         outside = true;
-    } else if (circle.center.x > bottom_right.x) {
+    } else if (circle.center.x > rect.bottom_right.x) {
         // right edge
-        nearest_edge.x = bottom_right.x;
+        nearest_edge.x = rect.bottom_right.x;
         outside = true;
     }
 
-    if (circle.center.y < top_left.y) {
+    if (circle.center.y < rect.top_left.y) {
         // top edge
-        nearest_edge.y = top_left.y;
+        nearest_edge.y = rect.top_left.y;
         outside = true;
-    } else if (circle.center.y > bottom_right.y) {
+    } else if (circle.center.y > rect.bottom_right.y) {
         // bottom edge
-        nearest_edge.y = bottom_right.y;
+        nearest_edge.y = rect.bottom_right.y;
         outside = true;
     }
 

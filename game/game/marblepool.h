@@ -40,7 +40,7 @@ public:
 
     void get(const Handle& handle, std::function<void(Marble&)> callback);
 
-    void update(const std::vector<Line>& walls, const std::vector<Circle>& objects);
+    void update(const std::vector<Line>& walls, const std::vector<Circle>& objects, const std::vector<Rect>& hitboxes);
 
     void draw();
 };
