@@ -8,6 +8,8 @@ uniform vec2 size;
 
 uniform float scale;
 
+uniform float y_sort;
+
 uniform float rotation;
 
 uniform vec2 anchor;
@@ -37,7 +39,7 @@ void main()
     loc = loc * vec2(1.0,-1.0);
 
     // tilt the top vertices up slightly to get y-sorting from depth test
-    mediump float z = gl_VertexID < 2 ? 0.999 : 1.0;
+    mediump float z = (y_sort > 0.5) && (gl_VertexID < 2) ? 0.998 : 0.999;
 
     gl_Position = vec4(loc, z, 1.0);
 

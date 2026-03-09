@@ -148,10 +148,17 @@ void Window::setDrawSettings(DrawSettings settings)
     active_settings = settings;
     glUniform1f(glGetUniformLocation(shader, "scale"), float(settings.scale));
     glUniform1f(glGetUniformLocation(shader, "rotation"), settings.rotation);
+    glUniform1f(glGetUniformLocation(shader, "y_sort"), settings.y_sorted ? 1.0f : 0.0f);
     glUniform1i(glGetUniformLocation(shader, "tileID"), settings.tile_id);
     glUniform2f(glGetUniformLocation(shader, "tileSheetSize"), float(settings.tiles_wide), float(settings.tiles_tall));
     glUniform2f(glGetUniformLocation(shader, "anchor"), float(settings.anchor.x), float(settings.anchor.y));
     glUniform4f(glGetUniformLocation(shader, "color"), float(settings.color >> 16)/255.0f, float((settings.color >> 8) & 0xff)/255.0f, float((settings.color) & 0xff)/255.0f, settings.alpha);
+
+    if (settings.y_sorted) {
+        glEnable(GL_DEPTH_TEST);
+    } else {
+        glDisable(GL_DEPTH_TEST);
+    }
 }
 
 void Window::setClearColor(int value)
