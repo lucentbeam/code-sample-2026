@@ -6,8 +6,15 @@
 #include <functional>
 
 #include "game/physicsbody.h"
-#include "game/marble.h"
-#include "game/wall.h"
+
+struct Marble {
+    PhysicsBody body;
+
+    enum Type {
+        Red = 0,
+        Yellow = 1
+    } id;
+};
 
 class MarblePool {
     struct Slot {
