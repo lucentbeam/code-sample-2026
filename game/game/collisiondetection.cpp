@@ -2,11 +2,6 @@
 
 #include <cmath>
 
-Line::Line(Vec2 start, Vec2 end) : start(start), dir(end - start), length(dir.length())
-{
-    if (length > 0) dir /= length;
-}
-
 CollisionInfo CollisionDetection::circleLine(const Circle& circle, const Line& line)
 {
     // find the distance along the infinite line to the nearest point
@@ -21,9 +16,6 @@ CollisionInfo CollisionDetection::circleLine(const Circle& circle, const Line& l
     info.normal = line.normal();
 
     Vec2 to_point = circle.center - info.contact_point;
-
-    // align the normal in the direction of the point
-    if (info.normal.dot(to_point) < 0) info.normal *= -1;
 
     info.distance = to_point.length();
     info.collides = info.distance < circle.radius;

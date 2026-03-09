@@ -4,6 +4,8 @@
 #include "core/window.h"
 #include "core/controls.h"
 
+#include "game/collisionmanager.h"
+
 #include "constants.h"
 
 namespace {
@@ -33,6 +35,7 @@ void Player::update()
         m_sprite.go(Bite);
     }
     m_body.move(dir * player_speed);
+    CollisionManager::addBall(-1, getCollider(), m_body);
 }
 
 void Player::draw()

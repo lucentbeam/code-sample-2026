@@ -4,9 +4,11 @@
 #include <cmath>
 
 #include "game/physicsbody.h"
+#include "game/collisionmanager.h"
 
 struct Marble {
     PhysicsBody body;
+
     int id = 0;
 };
 

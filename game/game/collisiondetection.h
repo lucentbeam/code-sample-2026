@@ -3,6 +3,8 @@
 
 #include "core/utility.h"
 
+#include "utils/shapes.h"
+
 /*  Notes:
  *   These collision detection algorithms are highly simplified for the scope of this sample.
  *   Notably, contact_point cannot be determined from instantaneous positions;
@@ -17,26 +19,6 @@ struct CollisionInfo {
     Vec2 normal;
     double distance;
     bool collides = false;
-};
-
-struct Circle {
-    Vec2 center;
-    double radius;
-};
-
-// Lines are one-sided and should be contstructed with their normal on their right
-struct Line {
-    Vec2 start;
-    Vec2 dir;
-    double length;
-
-    Line(Vec2 start, Vec2 end);
-    Vec2 normal() const { return dir.right(); }
-};
-
-struct Rect {
-    Vec2 top_left;
-    Vec2 bottom_right;
 };
 
 class CollisionDetection

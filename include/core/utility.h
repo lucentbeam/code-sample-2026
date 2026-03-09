@@ -42,6 +42,12 @@ struct Vec2 {
 
     constexpr Vec2 operator/(const Vec2& other) const { return Vec2(x / other.x, y / other.y); }
 
+    constexpr Vec2 operator/=(const Vec2& other) {
+        x /= other.x;
+        y /= other.y;
+        return *this;
+    }
+
     constexpr Vec2& operator/=(double value) {
         // TODO: evaluate whether this should check for divide by zero errors
         x /= value;

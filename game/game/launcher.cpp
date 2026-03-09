@@ -8,7 +8,7 @@ Launcher::Launcher(MarblePool * pool, Vec2 pos, Vec2 dir) :
     marbles(pool),
     position(pos),
     facing(dir),
-    timer(0.3, true)
+    timer(0.1, true)
 {
 
 }

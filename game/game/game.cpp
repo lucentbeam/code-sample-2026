@@ -9,7 +9,7 @@
 #include "game/marblepool.h"
 #include "game/launcher.h"
 
-#include "game/collisiondetection.h"
+#include "game/collisionmanager.h"
 
 #include "constants.h"
 
@@ -18,16 +18,16 @@ namespace {
 
     MarblePool marbles;
 
-    std::vector<Line> walls;
-
     Launcher launcher(&marbles, Vec2(arena_cx, arena_cy - arena_radius), Vec2(0, 1));
 
+    Rect arena = {Vec2(arena_cx, arena_cy) - Vec2(2,2) * arena_radius, Vec2(arena_cx, arena_cy) + Vec2(2,2) * arena_radius};
     bool init = false;
 }
 
 void Game::update(FSM &fsm)
 {
     if (!init) {
+        CollisionManager::initialize(arena, Vec2(16,16));
         player.init();
 
         constexpr int wallcount = 20;
@@ -36,29 +36,31 @@ void Game::update(FSM &fsm)
         for(int i = 0; i < 20; ++i) {
             Vec2 v1 = center + Vec2(double(i + 0) * step_size - 1) * arena_radius;
             Vec2 v2 = center + Vec2(double(i + 1) * step_size + 1) * arena_radius;
-            walls.push_back(Line(v1, v2));
+            CollisionManager::addWall(Line(v1, v2));
         }
 
         launcher.start();
 
         init = true;
     }
+
     if (Controls::get("action").pressed()) {
         fsm.go(GameoverScreen);
         return;
     }
 
+    CollisionManager::clearBalls();
+
     launcher.update();
     player.update();
-
-    std::vector<Circle> circles;
-    circles.push_back(player.getCollider());
-    marbles.update(walls, circles, player.getHitBoxes());
+    marbles.update(player.getHitBoxes());
 }
 
 void Game::draw(FSM &)
 {
-    Window::print("gameplay", 0, 0);
+    char buf[30];
+    std::sprintf(buf, "marble count: %d", marbles.count);
+    Window::print(buf, 0, 0);
 
     launcher.draw();
     marbles.draw();

@@ -9,8 +9,6 @@
 #include "game/marble.h"
 #include "game/wall.h"
 
-#include "game/collisiondetection.h"
-
 class MarblePool {
     struct Slot {
         size_t generation = 0;
@@ -25,8 +23,10 @@ class MarblePool {
 
     size_t availableCount();
 
+    inline void iterate(std::function<void(int, PhysicsBody&)> callback);
+
+    inline void iterate(std::function<void(Marble&)> callback);
 public:
-    MarblePool();
 
     class Handle {
         int id = -1;
@@ -40,9 +40,11 @@ public:
 
     void get(const Handle& handle, std::function<void(Marble&)> callback);
 
-    void update(const std::vector<Line>& walls, const std::vector<Circle>& objects, const std::vector<Rect>& hitboxes);
+    void update(std::vector<Rect> hitboxes);
 
     void draw();
+
+    int count;
 };
 
 #endif // MARBLEPOOL_H

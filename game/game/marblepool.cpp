@@ -5,6 +5,8 @@
 #include "core/system.h"
 #include "core/window.h"
 
+#include "game/collisionmanager.h"
+
 #include "constants.h"
 
 void MarblePool::grow(int count)
@@ -23,9 +25,36 @@ size_t MarblePool::availableCount()
     return available_slots.size();
 }
 
-MarblePool::MarblePool()
+inline void MarblePool::iterate(std::function<void (int, PhysicsBody&)> callback)
 {
+    auto body_it = marbles.begin();
+    auto slot_it = slots.begin();
+    int slot_idx = 0;
 
+    while (body_it != marbles.end() && slot_it != slots.end()) {
+        if (slot_it->active) {
+            callback(slot_idx, body_it->body);
+        }
+
+        body_it++;
+        slot_it++;
+        slot_idx++;
+    }
+}
+
+void MarblePool::iterate(std::function<void (Marble&)> callback)
+{
+    auto body_it = marbles.begin();
+    auto slot_it = slots.begin();
+
+    while (body_it != marbles.end() && slot_it != slots.end()) {
+        if (slot_it->active) {
+            callback(*body_it);
+        }
+
+        body_it++;
+        slot_it++;
+    }
 }
 
 MarblePool::Handle MarblePool::create(Vec2 position, Vec2 velocity)
@@ -70,97 +99,89 @@ void MarblePool::get(const Handle& handle, std::function<void (Marble&)> callbac
     }
 }
 
-#include <iostream>
-void MarblePool::update(const std::vector<Line>& walls, const std::vector<Circle>& objects, const std::vector<Rect>& hitboxes)
+void MarblePool::update(std::vector<Rect> hitboxes)
 {
-    auto body_it = marbles.begin();
-    auto slot_it = slots.begin();
-    int slot_idx = 0;
+    Circle collider(marble_radius);
 
-    auto increment = [&body_it, &slot_it, &slot_idx](){
-        body_it++;
-        slot_it++;
-        slot_idx++;
-    };
+    count = 0;
 
-    Circle collider;
-    collider.radius = marble_radius;
-
-    while(body_it != marbles.end() && slot_it != slots.end()) {
-        if (slot_it->active) {
-            body_it->body.verletUpdate();
-            collider.center = body_it->body.getPosition();
-            body_it->body.setVelocity(body_it->body.getVelocity());
-
-            bool destroy = false;
-            for (const Rect& hb : hitboxes) {
-                if (CollisionDetection::overlapsRect(collider, hb)) {
-                    destroy = true;
-                    break;
-                }
-            }
-            if (destroy) {
-                slot_it->active = false;
-                available_slots.push(slot_idx);
-                std::cout << "champed!" << slot_idx << std::endl;
-                // do other stuff here
-                increment();
-                continue;
-            }
-            /* Note:
-             *  These collision resolution algorithms are highly simplified for the scope of this sample.
-             *  They do not account for previous positions, and therefore phasing is possible.
-             *  In addition, they resolve collisions instantly rather that resolving multi-body
-             *  collisions.
-             */
-            for (const Circle& object : objects) {
-                CollisionInfo c = CollisionDetection::circleCircle(collider, object);
-                if (c.collides) {
-                    Vec2 vel = body_it->body.getVelocity();
-                    double dot = vel.dot(c.normal);
-                    body_it->body.setPosition(c.contact_point + c.normal * collider.radius);
-                    if (dot < 0) {
-                        body_it->body.setVelocity(vel - c.normal * dot * 2);
-                    }
-                    body_it->id = 1;
-                }
-            }
-            for (const Line& wall : walls) {
-                CollisionInfo c = CollisionDetection::circleLine(collider, wall);
-                if (c.collides) {
-                    Vec2 vel = body_it->body.getVelocity();
-                    double dot = vel.dot(c.normal);
-                    if (dot < 0) {
-                        body_it->body.setPosition(c.contact_point + c.normal * collider.radius);
-                        body_it->body.setVelocity(vel - c.normal * dot * 2);
-                    }
-                    body_it->id = 1;
-                }
+    iterate([&](int index, PhysicsBody& body) {
+        body.verletUpdate();
+        collider.center = body.getPosition();
+        CollisionManager::addBall(index, collider, body);
+        for (const Rect& hb : hitboxes) {
+            if (CollisionDetection::overlapsRect(collider, hb)) {
+                slots[index].active = false;
+                available_slots.push(index);
+                return;
             }
         }
-        increment();
-    }
+        count++;
+    });
+
+    Circle collider_prev(marble_radius);
+
+    struct CollisionAggregator {
+        int collision_count = 0;
+        Vec2 collision_center;
+        Vec2 collision_normal;
+        Vec2 velocity_offset;
+    } aggregator;
+
+    iterate([&](int index, PhysicsBody& body){
+        collider.center = body.getPosition();
+        collider_prev.center = body.getPrevious();
+
+        Vec2 vel = body.getVelocity();
+
+        aggregator = CollisionAggregator{0, Vec2(), Vec2(), Vec2()};
+
+        CollisionManager::forBallCollisions(index, [&aggregator, &vel](const PhysicsBody& other, CollisionInfo info) {
+            double dot = vel.dot(info.normal);
+            aggregator.collision_center += info.contact_point;
+            aggregator.collision_normal += info.normal;
+
+            // elastic collision: subtract the component of this ball's velocity projected on the collision normal
+            //                    and add the component of the other ball's velocity projected on the normal
+            aggregator.velocity_offset += info.normal * (other.getVelocity().dot(info.normal) - dot);
+
+            aggregator.collision_count++;
+        });
+        if (aggregator.collision_count > 0) {
+            aggregator.collision_center /= double(aggregator.collision_count);
+            aggregator.collision_normal /= double(aggregator.collision_count);
+            body.setPosition(aggregator.collision_center + aggregator.collision_normal * marble_radius);
+            body.setVelocity(vel + aggregator.velocity_offset / double(aggregator.collision_count));
+
+            collider.center = body.getPosition();
+            collider_prev.center = body.getPrevious();
+        }
+
+        // do the wall pass second to try to override balls pushing eachother through walls
+        vel = body.getVelocity();
+        CollisionManager::forWallCollisions(collider_prev, collider, [&body, &vel](CollisionInfo info) {
+            double dot = vel.dot(info.normal);
+            // ignore the wall when the ball is moving away from it
+            if (dot < 0) {
+                body.setPosition(info.contact_point + info.normal * marble_radius);
+                body.setVelocity(vel + info.normal * dot * -2);
+            }
+        });
+    });
 }
 
 void MarblePool::draw()
 {
-    auto body_it = marbles.begin();
-    auto slot_it = slots.begin();
-
     DrawSettings settings;
     settings.setTiled(0, 2, 1);
     Window::setDrawSettings(settings);
 
     Window::bind("marble");
 
-    while(body_it != marbles.end() && slot_it != slots.end()) {
-        if (slot_it->active) {
-            Vec2 p = body_it->body.getInterpolatedPosition();
-            settings.tile_id = body_it->id;
-            Window::setDrawSettings(settings);
-            Window::drawBound(p.x, p.y, 0);
-        }
-        body_it++;
-        slot_it++;
-    }
+    iterate([&](Marble& marble) {
+        Vec2 p = marble.body.getInterpolatedPosition();
+        settings.tile_id = marble.id;
+        Window::setDrawSettings(settings);
+        Window::drawBound(p.x, p.y, 0);
+    });
 }
