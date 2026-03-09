@@ -15,7 +15,7 @@ class Player
     PhysicsBody m_body;
 
 public:
-    void init();
+    void initialize();
 
     void update();
     void draw();

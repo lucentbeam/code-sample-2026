@@ -3,6 +3,7 @@
 std::vector<Line> CollisionManager::s_walls;
 CollisionGrid CollisionManager::s_wall_grid;
 
+int CollisionManager::s_post_index = -1;
 std::vector<Circle> CollisionManager::s_balls;
 std::vector<PhysicsBody> CollisionManager::s_ball_bodies;
 std::unordered_map<int, size_t> CollisionManager::s_ball_id_map;
@@ -33,6 +34,7 @@ void CollisionManager::startFrame()
     s_ball_bodies.clear();
     s_hurtbox_grid.clear();
     s_hurtboxes.clear();
+    s_post_index = -1;
 }
 
 void CollisionManager::addBall(int id, const Circle& circle, const PhysicsBody& body)
@@ -50,6 +52,12 @@ void CollisionManager::addHurtbox(HurtboxType type, const Circle& circle)
 {
     s_hurtbox_grid.insert(int(s_hurtboxes.size()), circle.getBounds());
     s_hurtboxes.push_back(HurtBox{type, circle});
+}
+
+void CollisionManager::addPost(const Circle& circle, const PhysicsBody& body)
+{
+    addBall(s_post_index, circle, body);
+    s_post_index--;
 }
 
 void CollisionManager::forBallCollisions(int id, std::function<void (const PhysicsBody&, CollisionInfo)> callback)

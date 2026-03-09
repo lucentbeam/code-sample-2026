@@ -1,7 +1,6 @@
 #include "clock.h"
 
-Clock::Clock(double duration, bool loops, std::function<void ()> callback) :
-    m_callback(callback),
+Clock::Clock(double duration, bool loops) :
     m_duration(duration),
     m_max_duration(duration),
     m_loops(loops)
@@ -9,21 +8,15 @@ Clock::Clock(double duration, bool loops, std::function<void ()> callback) :
 
 }
 
-void Clock::bind(std::function<void ()> callback)
+bool Clock::update(double dt)
 {
-    m_callback = callback;
-}
-
-void Clock::update(double dt)
-{
-    if (done()) return;
+    if (done() && !m_loops) return true;
     m_duration -= dt;
-    if (done() && m_callback != nullptr) {
-        m_callback();
-        if (m_loops) {
-            m_duration += m_max_duration;
-        }
+    if (done() && m_loops) {
+        m_duration += m_max_duration;
+        return true;
     }
+    return done();
 }
 
 bool Clock::done() const

@@ -15,7 +15,7 @@ namespace {
         Bite = 2,
     };
 }
-void Player::init()
+void Player::initialize()
 {
     m_body = PhysicsBody(arena_cx, arena_cy);
 
@@ -35,7 +35,7 @@ void Player::update()
     }
     m_body.move(dir * player_speed);
 
-    CollisionManager::addBall(-1, Circle(m_body.getPosition(), player_radius), m_body);
+    CollisionManager::addPost(Circle(m_body.getPosition(), player_radius), m_body);
 
     bool lifted = m_sprite.currentState() == Bite || m_sprite.currentState() == Open;
     bool chomping = m_sprite.currentState() == Bite && m_sprite.fraction() > 0.4;
@@ -49,7 +49,7 @@ void Player::update()
         if (chomping) {
             CollisionManager::addHurtbox(HurtboxType::PlayerChomp, collider);
         } else if (!lifted) {
-            CollisionManager::addBall(-2-i, collider, m_body);
+            CollisionManager::addPost(collider, m_body);
         }
     }
 }

@@ -1,0 +1,40 @@
+#ifndef ARENA_H
+#define ARENA_H
+
+#include <vector>
+
+#include "game/launcher.h"
+#include "game/marblepool.h"
+#include "launcher.h"
+
+#include "utils/shapes.h"
+
+class Arena
+{
+    MarblePool marbles;
+
+    std::vector<Launcher> m_launchers;
+    std::vector<Circle> m_drains;
+
+    struct Post { PhysicsBody body; Circle collider; };
+    std::vector<Post> m_posts;
+
+    void addLauncher(Vec2 at, Vec2 facing);
+
+    void addDrain(Vec2 at);
+
+    void addPost(Vec2 at);
+
+    void startWall(Vec2 at);
+    void drawWallTo(Vec2 to);
+    void closeWall();
+
+public:
+    void initialize();
+
+    void update();
+
+    void draw();
+};
+
+#endif // ARENA_H

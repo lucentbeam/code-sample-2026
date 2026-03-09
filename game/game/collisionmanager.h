@@ -33,6 +33,7 @@ public:
     // functions called during physics frames
     static void addBall(int id, const Circle& circle, const PhysicsBody& body);
     static void addHurtbox(HurtboxType type, const Circle& circle);
+    static void addPost(const Circle& circle, const PhysicsBody& body); // uses ball interface, but does not clash with marble index
 
     // functions called during collision resolution
     static void forBallCollisions(int id, std::function<void(const PhysicsBody&, CollisionInfo)> callback);
@@ -43,6 +44,7 @@ private:
     static std::vector<Line> s_walls;
     static CollisionGrid s_wall_grid;
 
+    static int s_post_index;
     static std::vector<Circle> s_balls;
     static std::vector<PhysicsBody> s_ball_bodies;
     static std::unordered_map<int, size_t> s_ball_id_map;

@@ -9,22 +9,19 @@
 
 class Launcher
 {
-    MarblePool * marbles;
+    MarblePool * m_marbles;
 
-    Vec2 position;
-    Vec2 facing;
-    Clock timer;
+    Vec2 m_position;
+    Vec2 m_facing;
+    Clock m_timer;
 
-    double accumulator;
+    double m_accumulator = 0;
 
-    unsigned int shot_counter = 0;
+    unsigned int m_shot_counter;
 
-    double angle() const;
+    Vec2 facing() const;
 public:
     Launcher(MarblePool * pool, Vec2 pos, Vec2 dir);
-
-    void start();
-    void stop();
 
     void update();
     void draw();

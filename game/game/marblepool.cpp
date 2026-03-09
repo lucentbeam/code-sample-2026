@@ -113,6 +113,11 @@ void MarblePool::update()
         if (CollisionManager::hitsAny(PlayerChomp, collider)) {
             slots[index].active = false;
             available_slots.push(index);
+            // callback to score
+        } else if (CollisionManager::hitsAny(LevelDrain, collider)) {
+            slots[index].active = false;
+            available_slots.push(index);
+            // callback to damage
         } else {
             CollisionManager::addBall(index, collider, body);
             count++;

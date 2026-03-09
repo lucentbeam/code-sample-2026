@@ -19,15 +19,16 @@ struct DrawSettings {
 
     float rotation = 0.0f;
 
+    bool y_sorted = true;
+
     void setTiled(int id, int width, int height) {
         tile_id = id;
         tiles_wide = width;
         tiles_tall = height;
     }
 
-    void rotate(float degrees) {
-        constexpr float deg_to_rad = 3.1416926f / 180.0f;
-        rotation = deg_to_rad * degrees;
+    void rotate(float radians) {
+        rotation = radians;
     }
 };
 

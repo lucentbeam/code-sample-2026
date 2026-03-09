@@ -6,41 +6,22 @@
 #include "states.h"
 
 #include "game/player.h"
-#include "game/marblepool.h"
-#include "game/launcher.h"
+#include "game/arena.h"
 
 #include "game/collisionmanager.h"
-
 #include "constants.h"
 
 namespace {
-    Player player;
-
-    MarblePool marbles;
-
-    Launcher launcher(&marbles, Vec2(arena_cx, arena_cy - arena_radius), Vec2(0, 1));
-
-    Rect arena = {Vec2(arena_cx, arena_cy) - Vec2(2,2) * arena_radius, Vec2(arena_cx, arena_cy) + Vec2(2,2) * arena_radius};
     bool init = false;
+    Player player;
+    Arena arena;
 }
 
 void Game::update(FSM &fsm)
 {
     if (!init) {
-        CollisionManager::initialize(arena, Vec2(8,8));
-        player.init();
-
-        constexpr int wallcount = 20;
-        constexpr double step_size = 360 / wallcount;
-        constexpr Vec2 center(arena_cx, arena_cy);
-        for(int i = 0; i < 20; ++i) {
-            Vec2 v1 = center + Vec2(double(i + 0) * step_size - 1) * arena_radius;
-            Vec2 v2 = center + Vec2(double(i + 1) * step_size + 1) * arena_radius;
-            CollisionManager::addWall(Line(v1, v2));
-        }
-
-        launcher.start();
-
+        player.initialize();
+        arena.initialize();
         init = true;
     }
 
@@ -51,18 +32,12 @@ void Game::update(FSM &fsm)
 
     CollisionManager::startFrame();
 
-    launcher.update();
     player.update();
-    marbles.update();
+    arena.update();
 }
 
 void Game::draw(FSM &)
 {
-    char buf[30];
-    std::sprintf(buf, "marble count: %d", marbles.count);
-    Window::print(buf, 0, 0);
-
-    launcher.draw();
-    marbles.draw();
+    arena.draw();
     player.draw();
 }
