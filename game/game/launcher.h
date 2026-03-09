@@ -17,6 +17,8 @@ class Launcher
 
     double accumulator;
 
+    unsigned int shot_counter = 0;
+
     double angle() const;
 public:
     Launcher(MarblePool * pool, Vec2 pos, Vec2 dir);

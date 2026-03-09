@@ -57,7 +57,7 @@ void MarblePool::iterate(std::function<void (Marble&)> callback)
     }
 }
 
-MarblePool::Handle MarblePool::create(Vec2 position, Vec2 velocity)
+MarblePool::Handle MarblePool::create(Vec2 position, Vec2 velocity, Marble::Type type)
 {
     if (availableCount() == 0) grow(64);
 
@@ -70,6 +70,7 @@ MarblePool::Handle MarblePool::create(Vec2 position, Vec2 velocity)
     slots[idx].active = true;
 
     marbles[idx].body = PhysicsBody(position, velocity);
+    marbles[idx].id = type;
 
     return h;
 }

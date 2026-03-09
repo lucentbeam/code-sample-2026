@@ -22,6 +22,7 @@ constexpr double player_bite_radius = 7;
 constexpr double launcher_fire_rate = 0.5; // seconds per marble
 constexpr double launcher_max_angle = 15;  // seconds per marble
 constexpr double launcher_sweep_rate = 2;  // seconds for -max to max
+constexpr unsigned int launch_yellow_marble_every = 15; // numbers of shots
 
 // derived/helper properties
 constexpr double player_speed = player_speed_pixels_per_second * physics_timestep;

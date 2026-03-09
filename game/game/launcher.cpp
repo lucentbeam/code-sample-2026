@@ -22,8 +22,12 @@ void Launcher::start()
 {
     timer.reset();
     timer.bind([&](){
+        shot_counter++;
         Vec2 f = facing.rot(angle());
-        marbles->create(position + f * 8, f * marble_launch_speed);
+
+        bool special = (shot_counter % launch_yellow_marble_every) == 0;
+        marbles->create(position + f * 8, f * marble_launch_speed, special ? Marble::Yellow : Marble::Red);
+
     });
 }
 

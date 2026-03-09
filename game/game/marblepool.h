@@ -41,7 +41,7 @@ public:
         friend MarblePool;
     };
 
-    Handle create(Vec2 position, Vec2 velocity);
+    Handle create(Vec2 position, Vec2 velocity, Marble::Type type);
 
     void release(const Handle& handle);
 
