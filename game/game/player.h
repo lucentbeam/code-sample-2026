@@ -18,6 +18,9 @@ public:
     void initialize();
 
     void update();
+
+    void resolveCollisions();
+
     void draw();
 };
 

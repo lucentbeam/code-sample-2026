@@ -34,6 +34,8 @@ public:
 
     void update();
 
+    void resolveCollisions();
+
     void draw();
 };
 

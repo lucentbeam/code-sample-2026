@@ -24,6 +24,8 @@ void FSM::go(int id)
     if (!tryGet(id, m_current)) {
         std::cerr << "ERROR: State number " << id << " does not exist" << std::endl;
         return;
+    } else {
+        m_current->go();
     }
 }
 

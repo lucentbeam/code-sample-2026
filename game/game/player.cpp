@@ -27,13 +27,13 @@ void Player::initialize()
 void Player::update()
 {
     Vec2 dir = Vec2(Controls::get("horizontal").value(), Controls::get("vertical").value());
+    m_body.move(dir.normalized() * player_speed);
 
     if (Controls::get("bite").held()) {
         m_sprite.go(Open);
     } else if (Controls::get("bite").released() && m_sprite.currentState() == Open) {
         m_sprite.go(Bite);
     }
-    m_body.move(dir * player_speed);
 
     CollisionManager::addPost(Circle(m_body.getPosition(), player_radius), m_body);
 
@@ -52,6 +52,20 @@ void Player::update()
             CollisionManager::addPost(collider, m_body);
         }
     }
+}
+
+void Player::resolveCollisions()
+{
+    Circle previous(m_body.getPrevious(), player_collision_radius);
+    Circle current(m_body.getPosition(), player_collision_radius);
+
+
+//    CollisionManager::forPostCollisions(current, [&](CollisionInfo info){
+//        m_body.setPosition(info.contact_point + info.normal * player_collision_radius);
+//    });
+    CollisionManager::forWallCollisions(previous, current, [&](CollisionInfo info){
+        m_body.setPosition(info.contact_point + info.normal * player_collision_radius);
+    });
 }
 
 void Player::draw()

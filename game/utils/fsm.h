@@ -8,6 +8,7 @@ class State {
 public:
     virtual ~State() {}
 
+    virtual void go() {}
     virtual void update(FSM&) = 0;
     virtual void draw(FSM&) = 0;
 };

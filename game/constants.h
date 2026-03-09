@@ -22,6 +22,7 @@ constexpr double marble_launch_speed_pixels_per_second = 40;
 
 constexpr double player_radius = 2.5;
 constexpr double marble_radius = 1.5;
+constexpr double player_collision_radius = 10; // the radius that the player uses against the arena
 
 constexpr double player_bite_radius = 7;
 

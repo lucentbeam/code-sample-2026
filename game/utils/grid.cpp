@@ -26,11 +26,11 @@ void CollisionGrid::forEachOverlap(Rect rect, std::function<void (std::unordered
     }
 }
 
-void CollisionGrid::configure(Rect bounds, Vec2 subdivisions)
+void CollisionGrid::configure(Rect bounds, size_t horizontal_subdivisions, size_t vertical_subdivisions)
 {
     m_bounds = bounds;
-    m_subdivisions_wide = size_t(std::fmax(subdivisions.x, 1));
-    m_subdivisions_tall = size_t(std::fmax(subdivisions.y, 1));
+    m_subdivisions_wide = size_t(std::fmax(horizontal_subdivisions, 1));
+    m_subdivisions_tall = size_t(std::fmax(vertical_subdivisions, 1));
     m_grid.clear();
     m_grid.resize(m_subdivisions_wide * m_subdivisions_tall);
 

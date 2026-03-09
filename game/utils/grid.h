@@ -13,7 +13,6 @@
 //  elements are inserted by ID & Rect
 //  overlaps are determined by checking a subgrid and then returning Rect/Rect collisions
 class CollisionGrid {
-
     std::vector<std::unordered_set<int>> m_grid;
     std::unordered_map<int, Rect> m_entry_bounds;
 
@@ -29,11 +28,7 @@ class CollisionGrid {
 public:
     CollisionGrid() = default;
 
-    // Note: Subdivisions should be positive and integer. It would probably be nicer, for this,
-    //       to support templated Vec2's (a la SFML) so that it could be a Vec2<unsigned int>
-    //       parameter, but for brevity I'm leaving this as a simpler albeit more treacherous
-    //       interface
-    void configure(Rect bounds, Vec2 subdivisions);
+    void configure(Rect bounds, size_t horizontal_subdivisions, size_t vertical_subdivisions);
 
     void clear();
 

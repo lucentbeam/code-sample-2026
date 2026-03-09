@@ -45,7 +45,7 @@ void Arena::closeWall()
 
 void Arena::initialize()
 {
-    CollisionManager::initialize(arena, Vec2(8,8));
+    CollisionManager::initialize(arena, 8, 8);
 
     // todo: load this from json or preferably svg to support tooling
 
@@ -80,7 +80,10 @@ void Arena::update()
     for (const Circle &drain : m_drains) {
         CollisionManager::addHurtbox(HurtboxType::LevelDrain, drain);
     }
+}
 
+void Arena::resolveCollisions()
+{
     marbles.update();
 }
 

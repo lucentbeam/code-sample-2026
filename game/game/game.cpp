@@ -17,7 +17,7 @@ namespace {
     Arena arena;
 }
 
-void Game::update(FSM &fsm)
+void Game::go()
 {
     if (!init) {
         player.initialize();
@@ -25,8 +25,16 @@ void Game::update(FSM &fsm)
         init = true;
     }
 
+//    player.reset();
+//    arena.reset();
+}
+
+void Game::update(FSM &fsm)
+{
+
     if (Controls::get("action").pressed()) {
         fsm.go(GameoverScreen);
+        init = false;
         return;
     }
 
@@ -34,6 +42,9 @@ void Game::update(FSM &fsm)
 
     player.update();
     arena.update();
+
+    player.resolveCollisions();
+    arena.resolveCollisions();
 }
 
 void Game::draw(FSM &)
