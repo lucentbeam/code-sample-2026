@@ -1,21 +1,21 @@
 #include "collisionmanager.h"
 
 std::vector<Line> CollisionManager::s_walls;
-
 CollisionGrid CollisionManager::s_wall_grid;
 
 std::vector<Circle> CollisionManager::s_balls;
-
 std::vector<PhysicsBody> CollisionManager::s_ball_bodies;
-
 std::unordered_map<int, size_t> CollisionManager::s_ball_id_map;
-
 CollisionGrid CollisionManager::s_ball_grid;
+
+std::vector<CollisionManager::HurtBox> CollisionManager::s_hurtboxes;
+CollisionGrid CollisionManager::s_hurtbox_grid;
 
 void CollisionManager::initialize(const Rect& bounds, const Vec2& subdivisions)
 {
     s_ball_grid.configure(bounds, subdivisions);
     s_wall_grid.configure(bounds, subdivisions);
+    s_hurtbox_grid.configure(bounds, subdivisions);
 }
 
 void CollisionManager::addWall(const Line& line)
@@ -23,6 +23,16 @@ void CollisionManager::addWall(const Line& line)
     size_t id = s_walls.size();
     s_walls.push_back(line);
     s_wall_grid.insert(int(id), line.getBounds());
+}
+
+void CollisionManager::startFrame()
+{
+    s_balls.clear();
+    s_ball_grid.clear();
+    s_ball_id_map.clear();
+    s_ball_bodies.clear();
+    s_hurtbox_grid.clear();
+    s_hurtboxes.clear();
 }
 
 void CollisionManager::addBall(int id, const Circle& circle, const PhysicsBody& body)
@@ -36,12 +46,10 @@ void CollisionManager::addBall(int id, const Circle& circle, const PhysicsBody& 
     s_ball_bodies.push_back(body);
 }
 
-void CollisionManager::clearBalls()
+void CollisionManager::addHurtbox(HurtboxType type, const Circle& circle)
 {
-    s_balls.clear();
-    s_ball_grid.clear();
-    s_ball_id_map.clear();
-    s_ball_bodies.clear();
+    s_hurtbox_grid.insert(int(s_hurtboxes.size()), circle.getBounds());
+    s_hurtboxes.push_back(HurtBox{type, circle});
 }
 
 void CollisionManager::forBallCollisions(int id, std::function<void (const PhysicsBody&, CollisionInfo)> callback)
@@ -74,4 +82,17 @@ void CollisionManager::forWallCollisions(const Circle& previous, const Circle& c
             callback(info);
         }
     }
+}
+
+bool CollisionManager::hitsAny(HurtboxType type, const Circle& circle)
+{
+    std::unordered_set<int> candidates = s_hurtbox_grid.getOverlaps(circle.getBounds());
+
+    for (int id : candidates) {
+        const HurtBox& box = s_hurtboxes[id];
+        if (box.type == type && CollisionDetection::circleCircle(circle, box.circle).collides) {
+            return true;
+        }
+    }
+    return false;
 }

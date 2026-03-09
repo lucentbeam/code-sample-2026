@@ -99,7 +99,7 @@ void MarblePool::get(const Handle& handle, std::function<void (Marble&)> callbac
     }
 }
 
-void MarblePool::update(std::vector<Rect> hitboxes)
+void MarblePool::update()
 {
     Circle collider(marble_radius);
 
@@ -108,15 +108,14 @@ void MarblePool::update(std::vector<Rect> hitboxes)
     iterate([&](int index, PhysicsBody& body) {
         body.verletUpdate();
         collider.center = body.getPosition();
-        CollisionManager::addBall(index, collider, body);
-        for (const Rect& hb : hitboxes) {
-            if (CollisionDetection::overlapsRect(collider, hb)) {
-                slots[index].active = false;
-                available_slots.push(index);
-                return;
-            }
+
+        if (CollisionManager::hitsAny(PlayerChomp, collider)) {
+            slots[index].active = false;
+            available_slots.push(index);
+        } else {
+            CollisionManager::addBall(index, collider, body);
+            count++;
         }
-        count++;
     });
 
     Circle collider_prev(marble_radius);

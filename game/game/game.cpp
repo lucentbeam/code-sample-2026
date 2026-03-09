@@ -27,7 +27,7 @@ namespace {
 void Game::update(FSM &fsm)
 {
     if (!init) {
-        CollisionManager::initialize(arena, Vec2(16,16));
+        CollisionManager::initialize(arena, Vec2(8,8));
         player.init();
 
         constexpr int wallcount = 20;
@@ -49,11 +49,11 @@ void Game::update(FSM &fsm)
         return;
     }
 
-    CollisionManager::clearBalls();
+    CollisionManager::startFrame();
 
     launcher.update();
     player.update();
-    marbles.update(player.getHitBoxes());
+    marbles.update();
 }
 
 void Game::draw(FSM &)

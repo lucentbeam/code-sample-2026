@@ -90,6 +90,7 @@ void AnimatedSprite::go(int state, bool reset_if_same)
 
 int AnimatedSprite::currentState()
 {
+    if (m_states.size() == 0) return 0;
     AnimationState state = m_states.at(m_current);
     if (state.auto_transition && state.animation.done()) {
         double overflow = state.animation.doneDuration();

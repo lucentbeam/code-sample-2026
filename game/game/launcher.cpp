@@ -8,7 +8,7 @@ Launcher::Launcher(MarblePool * pool, Vec2 pos, Vec2 dir) :
     marbles(pool),
     position(pos),
     facing(dir),
-    timer(0.1, true)
+    timer(launcher_fire_rate, true)
 {
 
 }
@@ -18,7 +18,7 @@ void Launcher::start()
     timer.reset();
     timer.bind([&](){
         Vec2 f = facing.rot(std::sin(accumulator / 1.0) * 15);
-        marbles->create(position + f * 8, f * marble_speed);
+        marbles->create(position + f * 8, f * marble_launch_speed);
     });
 }
 

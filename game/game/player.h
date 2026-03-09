@@ -13,16 +13,12 @@ class Player
 {
     AnimatedSprite m_sprite;
     PhysicsBody m_body;
-    mutable Circle m_collider;
 
 public:
     void init();
 
     void update();
     void draw();
-
-    Circle getCollider() const;
-    std::vector<Rect> getHitBoxes();
 };
 
 #endif // PLAYER_H
