@@ -4,6 +4,11 @@
 
 #include "constants.h"
 
+double Launcher::angle() const
+{
+    return std::sin(accumulator / launcher_sweep_rate * 3.1415926) * launcher_max_angle;
+}
+
 Launcher::Launcher(MarblePool * pool, Vec2 pos, Vec2 dir) :
     marbles(pool),
     position(pos),
@@ -17,7 +22,7 @@ void Launcher::start()
 {
     timer.reset();
     timer.bind([&](){
-        Vec2 f = facing.rot(std::sin(accumulator / 1.0) * 15);
+        Vec2 f = facing.rot(angle());
         marbles->create(position + f * 8, f * marble_launch_speed);
     });
 }
@@ -35,6 +40,9 @@ void Launcher::update()
 
 void Launcher::draw()
 {
-    Window::setDrawSettings();
+    DrawSettings settings;
+    settings.rotate(angle());
+    Window::setDrawSettings(settings);
     Window::draw("launcher", position.x, position.y, 0);
+    Window::setDrawSettings();
 }

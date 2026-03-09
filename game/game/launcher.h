@@ -17,6 +17,7 @@ class Launcher
 
     double accumulator;
 
+    double angle() const;
 public:
     Launcher(MarblePool * pool, Vec2 pos, Vec2 dir);
 

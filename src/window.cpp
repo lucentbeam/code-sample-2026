@@ -147,6 +147,7 @@ void Window::setDrawSettings(DrawSettings settings)
 {
     active_settings = settings;
     glUniform1f(glGetUniformLocation(shader, "scale"), float(settings.scale));
+    glUniform1f(glGetUniformLocation(shader, "rotation"), settings.rotation);
     glUniform1i(glGetUniformLocation(shader, "tileID"), settings.tile_id);
     glUniform2f(glGetUniformLocation(shader, "tileSheetSize"), float(settings.tiles_wide), float(settings.tiles_tall));
     glUniform2f(glGetUniformLocation(shader, "anchor"), float(settings.anchor.x), float(settings.anchor.y));
