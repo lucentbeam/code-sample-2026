@@ -23,12 +23,15 @@ void Title::update(FSM &fsm)
 
 void Title::draw(FSM &)
 {
+    // TODO: add text alignment support
     Window::setDrawSettings();
-    Window::print("Hippos of Significant Hunger", 0, 30, 2);
+    Window::print("Hippos", resolution_x/2 - 40, 10, 2);
+    Window::print("of", resolution_x/2 - 10, 40, 1);
+    Window::print("Significant Hunger", resolution_x/2 - 110, 60, 2);
 
     DrawSettings settings;
     settings.color = Controls::get("action").held() ? ColorLightGreen : 0xffffff;
     Window::setDrawSettings(settings);
 
-    Window::print("<space/return> to play", resolution_x * 0.25, resolution_y/2 + 20, 0.75);
+    Window::print("<space/return> to play", resolution_x/2 - 54, resolution_y/2 + 20, 0.75);
 }
