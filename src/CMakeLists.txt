@@ -19,8 +19,13 @@ add_library(core
     ${CMAKE_SOURCE_DIR}/external/glad/glad.c
 )
 
-target_link_libraries(core "${SDL_PATH}/lib/x64/SDL2.lib")
-target_include_directories(core PRIVATE "${SDL_PATH}/include")
+
+if(WIN32)
+    target_link_libraries(core "${SDL_PATH}/lib/x64/SDL2.lib")
+    target_include_directories(core PRIVATE "${SDL_PATH}/include")
+else()
+    target_link_libraries(core SDL2)
+endif()
 
 target_include_directories(core PUBLIC 
     ${CMAKE_SOURCE_DIR}/include
