@@ -30,3 +30,17 @@ target_link_libraries(game PRIVATE core)
 target_include_directories(game PRIVATE
     ${CMAKE_SOURCE_DIR}/game/
 )
+
+add_custom_command(TARGET game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${PROJECT_SOURCE_DIR}/game/resources"
+    $<TARGET_FILE_DIR:game>/resources
+)
+
+if(WIN32)
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${SDL_PATH}/lib/x64/SDL2.dll"
+        $<TARGET_FILE_DIR:game>
+    )
+endif()
