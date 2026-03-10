@@ -3,6 +3,7 @@
 #include "grid.h"
 
 #include <iostream>
+#include <limits>
 
 void CollisionGrid::forEachOverlap(Rect rect, std::function<void (std::unordered_set<size_t>&)> callback)
 {

@@ -144,7 +144,7 @@ void MarblePool::update()
     iterate([&](int index, Marble& marble){
         Vec2 vel = marble.body.getVelocity();
 
-        aggregator = CollisionAggregator{0, Vec2(), Vec2(), Vec2()};
+        aggregator = CollisionAggregator();
 
         CollisionManager::forDynamicCollisions(marble.getCollisionObject(), collisionMask, [&aggregator, &vel](const CollisionObject& other, CollisionInfo info) {
             double dot = vel.dot(info.normal);

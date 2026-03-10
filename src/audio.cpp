@@ -3,7 +3,7 @@
 #include "audio.h"
 
 #include <iostream>
-#include <iterator>
+#include <cstring>
 #include <unordered_map>
 
 #include <SDL2/SDL.h>

@@ -3,11 +3,10 @@
 #include "controls.h"
 
 #include <cmath>
-#include <limits>
 #include <unordered_map>
 #include <vector>
-#include <functional>
 #include <iostream>
+#include <memory>
 
 #include "utilities/platformcontrols.h"
 

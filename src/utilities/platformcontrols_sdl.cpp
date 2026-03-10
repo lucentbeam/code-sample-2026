@@ -4,7 +4,7 @@
 
 #include <unordered_map>
 #include <ctype.h>
-#include <numeric>
+#include <limits>
 
 #include <SDL2/SDL.h>
 

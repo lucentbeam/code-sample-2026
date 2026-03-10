@@ -4,6 +4,7 @@
 #define AUDIO_H
 
 #include <string>
+#include <cstdint>
 
 struct AudioData;
 class AudioController;

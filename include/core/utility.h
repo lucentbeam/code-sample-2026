@@ -18,7 +18,7 @@ struct Vec2 {
     // operator overloads
     constexpr Vec2 operator+(const Vec2& other) const { return Vec2(x + other.x, y + other.y); }
 
-    constexpr Vec2& operator+=(const Vec2& other) {
+    Vec2& operator+=(const Vec2& other) {
         x += other.x;
         y += other.y;
         return *this;
@@ -26,7 +26,7 @@ struct Vec2 {
 
     constexpr Vec2 operator-(const Vec2& other) const { return Vec2(x - other.x, y - other.y); }
 
-    constexpr Vec2& operator-=(const Vec2& other) {
+    Vec2& operator-=(const Vec2& other) {
         x -= other.x;
         y -= other.y;
         return *this;
@@ -34,7 +34,7 @@ struct Vec2 {
 
     constexpr Vec2 operator*(const Vec2& other) const { return Vec2(x * other.x, y * other.y); }
 
-    constexpr Vec2& operator*=(double value) {
+    Vec2& operator*=(double value) {
         x *= value;
         y *= value;
         return *this;
@@ -44,13 +44,13 @@ struct Vec2 {
 
     constexpr Vec2 operator/(const Vec2& other) const { return Vec2(x / other.x, y / other.y); }
 
-    constexpr Vec2 operator/=(const Vec2& other) {
+    Vec2 operator/=(const Vec2& other) {
         x /= other.x;
         y /= other.y;
         return *this;
     }
 
-    constexpr Vec2& operator/=(double value) {
+    Vec2& operator/=(double value) {
         // TODO: evaluate whether this should check for divide by zero errors
         x /= value;
         y /= value;
