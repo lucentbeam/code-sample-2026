@@ -4,6 +4,7 @@
 #include "core/controls.h"
 
 #include "states.h"
+#include "constants.h"
 
 void GameOver::update(FSM &fsm)
 {
@@ -13,7 +14,8 @@ void GameOver::update(FSM &fsm)
     }
 }
 
-void GameOver::draw(FSM &)
+void GameOver::draw(FSM &fsm)
 {
-    Window::print("gameover", 0, 0);
+    fsm.get(GameScreen)->draw(fsm);
+    Window::print("GAMEOVER", resolution_x/2 - 60, resolution_y/2 - 12, 2);
 }

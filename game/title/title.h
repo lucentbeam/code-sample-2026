@@ -8,6 +8,7 @@ class Title : public State
 public:
 
     // State interface
+    void go() override;
     void update(FSM &) override;
     void draw(FSM &) override;
 };

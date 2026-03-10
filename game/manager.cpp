@@ -25,7 +25,7 @@ void Manager::initialize()
     Controls::bindAxis("horizontal", -1, 1, {"a", "kb_left", "pad_lstick_l", "pad_dpad_l"}, {"d", "kb_right", "pad_lstick_r", "pad_dpad_r"});
     Controls::bindAxis("vertical", -1, 1, {"w", "kb_up"}, {"s", "kb_down"});
 
-    Window::setClearColor(clear_color);
+    Window::setClearColor(game_screen_clear_color);
 
     fsm.go(TitleScreen);
 }

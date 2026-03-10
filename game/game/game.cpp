@@ -10,31 +10,28 @@
 
 #include "game/collisionmanager.h"
 #include "constants.h"
+#include "game/gamestate.h"
 
 namespace {
-    bool init = false;
+    bool game_active = false;
     Player player;
     Arena arena;
 }
 
 void Game::go()
 {
-    if (!init) {
-        player.initialize();
-        arena.initialize();
-        init = true;
-    }
+    player.initialize();
+    arena.initialize();
+    game_active = true;
 
-//    player.reset();
-//    arena.reset();
+    Window::setClearColor(game_screen_clear_color);
 }
 
 void Game::update(FSM &fsm)
 {
-
-    if (Controls::get("action").pressed()) {
+    if (GameState::gameover()) {
         fsm.go(GameoverScreen);
-        init = false;
+        game_active = false;
         return;
     }
 
@@ -51,4 +48,13 @@ void Game::draw(FSM &)
 {
     arena.draw();
     player.draw();
+
+    if (!game_active) return;
+
+    std::string txt = "SCORE: " + std::to_string(GameState::score());
+    Window::print(txt, 4, 4);
+
+    txt = "HEALTH: " + std::to_string(GameState::health());
+    Window::print(txt, 4, resolution_y - 12);
+
 }

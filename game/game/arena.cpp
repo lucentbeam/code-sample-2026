@@ -108,9 +108,10 @@ void Arena::draw()
         Window::draw("drain", drain.center.x, drain.center.y, 0);
     }
 
-    char buf[30];
-    std::sprintf(buf, "marble count: %d", marbles.count);
-    Window::print(buf, 0, 0);
+    // debug helper
+//    char buf[30];
+//    std::sprintf(buf, "marble count: %d", marbles.count);
+//    Window::print(buf, 0, 0);
 
     Window::setDrawSettings();
     for(size_t idx : m_posts) {

@@ -7,6 +7,7 @@ add_executable(game
         title/title.h title/title.cpp
 
         game/game.h game/game.cpp
+        game/gamestate.h game/gamestate.cpp
         game/arena.h game/arena.cpp
         game/marblepool.h game/marblepool.cpp
         game/physicsbody.h game/physicsbody.cpp

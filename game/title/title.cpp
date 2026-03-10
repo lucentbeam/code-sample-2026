@@ -5,6 +5,11 @@
 
 #include "states.h"
 
+void Title::go()
+{
+    Window::setClearColor(0);
+}
+
 void Title::update(FSM &fsm)
 {
     if (Controls::get("action").pressed()) {

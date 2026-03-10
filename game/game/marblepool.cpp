@@ -6,6 +6,7 @@
 #include "core/window.h"
 
 #include "game/collisionmanager.h"
+#include "game/gamestate.h"
 
 #include "constants.h"
 
@@ -118,10 +119,12 @@ void MarblePool::update()
             slots[index].active = false;
             available_slots.push(index);
             // callback to score
+            GameState::score(marble.id == Marble::Yellow ? 10 : 1);
         } else if (CollisionManager::ifAnyCollision(&marble.collider, CollisionType::LevelDrain)) {
             slots[index].active = false;
             available_slots.push(index);
             // callback to damage
+            GameState::damage(1);
         } else {
             CollisionManager::addDynamic(marble.getCollisionObject());
             count++;

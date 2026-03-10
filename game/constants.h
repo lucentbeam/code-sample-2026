@@ -12,7 +12,7 @@ constexpr int starting_window_scale = 3;
 constexpr int ColorLightBlue = 0x249fde;
 constexpr int ColorLightGreen = 0x59c135;
 
-constexpr int clear_color = ColorLightGreen;
+constexpr int game_screen_clear_color = ColorLightGreen;
 
 // physics properties
 constexpr double arena_radius = (resolution_y - 5)/2;
