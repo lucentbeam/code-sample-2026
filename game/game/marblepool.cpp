@@ -192,3 +192,11 @@ void MarblePool::draw()
         Window::drawBound(p.x, p.y, 0);
     });
 }
+
+void MarblePool::clear()
+{
+    marbles.clear();
+    slots.clear();
+    available_slots = std::stack<size_t>();
+    grow(64);
+}

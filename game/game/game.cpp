@@ -20,6 +20,8 @@ namespace {
 
 void Game::go()
 {
+    GameState::reset();
+
     player.initialize();
     arena.initialize();
     game_active = true;

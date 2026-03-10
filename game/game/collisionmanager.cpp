@@ -45,7 +45,10 @@ void CollisionManager::forCollisions(const CollisionObjectContainer& container, 
 
 void CollisionManager::initialize(const Rect& bounds, size_t horizontal_subdivisions, size_t vertical_subdivisions)
 {
+    s_statics.entries.clear();
     s_statics.grid.configure(bounds, horizontal_subdivisions, vertical_subdivisions);
+
+    s_dynamics.entries.clear();
     s_dynamics.grid.configure(bounds, horizontal_subdivisions, vertical_subdivisions);
 }
 

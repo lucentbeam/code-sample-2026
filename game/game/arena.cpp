@@ -49,6 +49,13 @@ void Arena::initialize()
 {
     CollisionManager::initialize(arena, 8, 8);
 
+    m_launchers.clear();
+    m_circles.clear();
+    m_drains.clear();
+    m_posts.clear();
+    m_walls.clear();
+    marbles.clear();
+
     // todo: load this from json or preferably svg to support tooling
 
     constexpr int wallcount = 20;

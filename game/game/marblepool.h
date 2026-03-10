@@ -59,6 +59,8 @@ public:
 
     void draw();
 
+    void clear();
+
     int count;
 };
 
