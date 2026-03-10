@@ -20,10 +20,9 @@ namespace {
 
 void Manager::initialize()
 {
-    Controls::bindButton("bite", {"kb_space"});
-    Controls::bindButton("action", {"kb_return", "pad_south"});
+    Controls::bindButton("action", {"kb_return", "pad_south", "pad_start", "kb_space"});
     Controls::bindAxis("horizontal", -1, 1, {"a", "kb_left", "pad_lstick_l", "pad_dpad_l"}, {"d", "kb_right", "pad_lstick_r", "pad_dpad_r"});
-    Controls::bindAxis("vertical", -1, 1, {"w", "kb_up"}, {"s", "kb_down"});
+    Controls::bindAxis("vertical", -1, 1, {"w", "kb_up", "pad_lstick_u", "pad_dpad_d"}, {"s", "kb_down", "pad_lstick_d", "pad_dpad_d"});
 
     Window::setClearColor(game_screen_clear_color);
 

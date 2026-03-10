@@ -37,9 +37,9 @@ void Player::update()
 
     m_collider.center = m_body.getPosition();
 
-    if (Controls::get("bite").held()) {
+    if (Controls::get("action").held()) {
         m_sprite.go(Open);
-    } else if (Controls::get("bite").released() && m_sprite.currentState() == Open) {
+    } else if (Controls::get("action").released() && m_sprite.currentState() == Open) {
         m_sprite.go(Bite);
     }
 

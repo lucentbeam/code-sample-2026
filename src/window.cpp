@@ -205,7 +205,7 @@ void Window::print(std::string line, double x, double y, double scale)
 
     // TODO: handle print anchoring & coloring?
     glUniform2f(glGetUniformLocation(shader, "anchor"), 0.0f, 0.0f);
-    glUniform4f(glGetUniformLocation(shader, "color"), 1.0f, 1.0f, 1.0f, 1.0f);
+//    glUniform4f(glGetUniformLocation(shader, "color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
     for (char c : line) {
         glUniform2f(glGetUniformLocation(shader, "center"), float(x), float(y));
