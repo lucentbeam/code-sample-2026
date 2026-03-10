@@ -3,6 +3,7 @@
 #include "core/system.h"
 #include "core/window.h"
 #include "core/controls.h"
+#include "core/audio.h"
 
 #include "game/collisionmanager.h"
 
@@ -41,6 +42,7 @@ void Player::update()
         m_sprite.go(Open);
     } else if (Controls::get("action").released() && m_sprite.currentState() == Open) {
         m_sprite.go(Bite);
+        Audio::playSFX("chomp");
     }
 
     CollisionManager::addDynamic({CollisionType::PlayerObject, &m_collider, &m_body});

@@ -18,7 +18,7 @@ constexpr int game_screen_clear_color = ColorLightGreen;
 constexpr double arena_radius = (resolution_y - 5)/2;
 
 constexpr double player_speed_pixels_per_second = 120;
-constexpr double marble_launch_speed_pixels_per_second = 40;
+constexpr double marble_launch_speed_pixels_per_second = 60;
 
 constexpr double player_radius = 2.5;
 constexpr double marble_radius = 1.5;
