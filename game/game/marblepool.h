@@ -7,13 +7,21 @@
 
 #include "game/physicsbody.h"
 
+#include "utils/shapes.h"
+#include "constants.h"
+
+struct CollisionObject;
 struct Marble {
+    Circle collider = Circle(marble_radius);
+
     PhysicsBody body;
 
     enum Type {
         Red = 0,
         Yellow = 1
     } id;
+
+    CollisionObject getCollisionObject();
 };
 
 class MarblePool {
@@ -30,7 +38,7 @@ class MarblePool {
 
     size_t availableCount();
 
-    inline void iterate(std::function<void(int, PhysicsBody&)> callback);
+    inline void iterate(std::function<void(int, Marble&)> callback);
 
     inline void iterate(std::function<void(Marble&)> callback);
 public:

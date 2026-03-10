@@ -9,6 +9,11 @@
 
 #include "constants.h"
 
+CollisionObject Marble::getCollisionObject()
+{
+    return {CollisionType::MarbleObject, &collider, &body};
+};
+
 void MarblePool::grow(int count)
 {
     size_t current_count = marbles.size();
@@ -25,7 +30,7 @@ size_t MarblePool::availableCount()
     return available_slots.size();
 }
 
-inline void MarblePool::iterate(std::function<void (int, PhysicsBody&)> callback)
+inline void MarblePool::iterate(std::function<void (int, Marble&)> callback)
 {
     auto body_it = marbles.begin();
     auto slot_it = slots.begin();
@@ -33,7 +38,7 @@ inline void MarblePool::iterate(std::function<void (int, PhysicsBody&)> callback
 
     while (body_it != marbles.end() && slot_it != slots.end()) {
         if (slot_it->active) {
-            callback(slot_idx, body_it->body);
+            callback(slot_idx, *body_it);
         }
 
         body_it++;
@@ -69,6 +74,7 @@ MarblePool::Handle MarblePool::create(Vec2 position, Vec2 velocity, Marble::Type
     h.generation = ++slots[idx].generation;
     slots[idx].active = true;
 
+    marbles[idx].collider = Circle(marble_radius);
     marbles[idx].body = PhysicsBody(position, velocity);
     marbles[idx].id = type;
 
@@ -102,29 +108,25 @@ void MarblePool::get(const Handle& handle, std::function<void (Marble&)> callbac
 
 void MarblePool::update()
 {
-    Circle collider(marble_radius);
-
     count = 0;
 
-    iterate([&](int index, PhysicsBody& body) {
-        body.verletUpdate();
-        collider.center = body.getPosition();
+    iterate([&](int index, Marble& marble) {
+        marble.body.verletUpdate();
+        marble.collider.center = marble.body.getPosition();
 
-        if (CollisionManager::hitsAny(PlayerChomp, collider)) {
+        if (CollisionManager::ifAnyCollision(&marble.collider, CollisionType::PlayerChomp)) {
             slots[index].active = false;
             available_slots.push(index);
             // callback to score
-        } else if (CollisionManager::hitsAny(LevelDrain, collider)) {
+        } else if (CollisionManager::ifAnyCollision(&marble.collider, CollisionType::LevelDrain)) {
             slots[index].active = false;
             available_slots.push(index);
             // callback to damage
         } else {
-            CollisionManager::addBall(index, collider, body);
+            CollisionManager::addDynamic(marble.getCollisionObject());
             count++;
         }
     });
-
-    Circle collider_prev(marble_radius);
 
     struct CollisionAggregator {
         int collision_count = 0;
@@ -133,43 +135,40 @@ void MarblePool::update()
         Vec2 velocity_offset;
     } aggregator;
 
-    iterate([&](int index, PhysicsBody& body){
-        collider.center = body.getPosition();
-        collider_prev.center = body.getPrevious();
-
-        Vec2 vel = body.getVelocity();
+    int collisionMask = CollisionType::LevelObject | CollisionType::MarbleObject | CollisionType::PlayerObject;
+    iterate([&](int index, Marble& marble){
+        Vec2 vel = marble.body.getVelocity();
 
         aggregator = CollisionAggregator{0, Vec2(), Vec2(), Vec2()};
 
-        CollisionManager::forBallCollisions(index, [&aggregator, &vel](const PhysicsBody& other, CollisionInfo info) {
+        CollisionManager::forDynamicCollisions(marble.getCollisionObject(), collisionMask, [&aggregator, &vel](const CollisionObject& other, CollisionInfo info) {
             double dot = vel.dot(info.normal);
             aggregator.collision_center += info.contact_point;
             aggregator.collision_normal += info.normal;
 
             // elastic collision: subtract the component of this ball's velocity projected on the collision normal
             //                    and add the component of the other ball's velocity projected on the normal
-            aggregator.velocity_offset += info.normal * (other.getVelocity().dot(info.normal) - dot);
+            aggregator.velocity_offset += info.normal * (other.body->getVelocity().dot(info.normal) - dot);
 
             aggregator.collision_count++;
         });
         if (aggregator.collision_count > 0) {
             aggregator.collision_center /= double(aggregator.collision_count);
             aggregator.collision_normal /= double(aggregator.collision_count);
-            body.setPosition(aggregator.collision_center + aggregator.collision_normal * marble_radius);
-            body.setVelocity(vel + aggregator.velocity_offset / double(aggregator.collision_count));
+            marble.body.setPosition(aggregator.collision_center + aggregator.collision_normal * marble_radius);
+            marble.body.setVelocity(vel + aggregator.velocity_offset / double(aggregator.collision_count));
 
-            collider.center = body.getPosition();
-            collider_prev.center = body.getPrevious();
+            marble.collider.center = marble.body.getPosition();
         }
 
         // do the wall pass second to try to override balls pushing eachother through walls
-        vel = body.getVelocity();
-        CollisionManager::forWallCollisions(collider_prev, collider, [&body, &vel](CollisionInfo info) {
+        vel = marble.body.getVelocity();
+        CollisionManager::forStaticCollisions(marble.getCollisionObject(), collisionMask, [&marble, &vel](const CollisionObject& other, CollisionInfo info) {
             double dot = vel.dot(info.normal);
             // ignore the wall when the ball is moving away from it
             if (dot < 0) {
-                body.setPosition(info.contact_point + info.normal * marble_radius);
-                body.setVelocity(vel + info.normal * dot * -2);
+                marble.body.setPosition(info.contact_point + info.normal * marble_radius);
+                marble.body.setVelocity(vel + info.normal * dot * -2);
             }
         });
     });

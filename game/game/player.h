@@ -13,6 +13,8 @@ class Player
 {
     AnimatedSprite m_sprite;
     PhysicsBody m_body;
+    Circle m_collider;
+    Circle m_mouth_colliders[4];
 
 public:
     void initialize();

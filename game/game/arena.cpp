@@ -19,12 +19,14 @@ void Arena::addLauncher(Vec2 at, Vec2 facing)
 
 void Arena::addDrain(Vec2 at)
 {
-    m_drains.push_back(Circle(at, drain_radius));
+    m_drains.push_back(m_circles.size());
+    m_circles.push_back(Circle(at, drain_radius));
 }
 
 void Arena::addPost(Vec2 at)
 {
-    m_posts.push_back({PhysicsBody(at), Circle(at, post_radius)});
+    m_posts.push_back(m_circles.size());
+    m_circles.push_back(Circle(at, post_radius));
 }
 
 void Arena::startWall(Vec2 at)
@@ -34,7 +36,7 @@ void Arena::startWall(Vec2 at)
 
 void Arena::drawWallTo(Vec2 to)
 {
-    CollisionManager::addWall(Line(wall_last, to));
+    m_walls.push_back(Line(wall_last, to));
     wall_last = to;
 }
 
@@ -65,20 +67,28 @@ void Arena::initialize()
     addPost({arena_cx - arena_radius * 0.3, arena_cy + arena_radius * 0.15});
 
     addDrain({arena_cx, arena_cy + arena_radius * 0.66});
+
+    // push level elements as statics
+    CollisionObject obj = {CollisionType::LevelObject, nullptr, nullptr};
+    for (size_t idx : m_posts) {
+        obj.collider = &*(m_circles.begin() + idx);
+        CollisionManager::addStatic(obj);
+    }
+    for (Line& wall : m_walls) {
+        obj.collider = &wall;
+        CollisionManager::addStatic(obj);
+    }
+    obj.type = CollisionType::LevelDrain;
+    for (size_t idx : m_drains) {
+        obj.collider = &*(m_circles.begin() + idx);
+        CollisionManager::addStatic(obj);
+    }
 }
 
 void Arena::update()
 {
     for (Launcher &launcher : m_launchers) {
         launcher.update();
-    }
-
-    for (const Post &post : m_posts) {
-        CollisionManager::addPost(post.collider, post.body);
-    }
-
-    for (const Circle &drain : m_drains) {
-        CollisionManager::addHurtbox(HurtboxType::LevelDrain, drain);
     }
 }
 
@@ -93,14 +103,20 @@ void Arena::draw()
     settings.y_sorted = false;
     Window::setDrawSettings(settings);
     Window::draw("arena", arena_cx, arena_cy, 0);
-    for(const Circle &drain : m_drains) Window::draw("drain", drain.center.x, drain.center.y, 0);
+    for(size_t idx : m_drains) {
+        const Circle& drain = m_circles[idx];
+        Window::draw("drain", drain.center.x, drain.center.y, 0);
+    }
 
     char buf[30];
     std::sprintf(buf, "marble count: %d", marbles.count);
     Window::print(buf, 0, 0);
 
     Window::setDrawSettings();
-    for(const Post &post : m_posts) Window::draw("post", post.collider.center.x, post.collider.center.y, 0);
+    for(size_t idx : m_posts) {
+        const Circle& post = m_circles[idx];
+        Window::draw("post", post.center.x, post.center.y, 0);
+    }
 
     for(Launcher &launcher : m_launchers) launcher.draw();
     marbles.draw();

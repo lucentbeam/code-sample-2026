@@ -14,10 +14,12 @@ class Arena
     MarblePool marbles;
 
     std::vector<Launcher> m_launchers;
-    std::vector<Circle> m_drains;
 
-    struct Post { PhysicsBody body; Circle collider; };
-    std::vector<Post> m_posts;
+    std::vector<Circle> m_circles;
+    std::vector<size_t> m_drains;
+    std::vector<size_t> m_posts;
+
+    std::vector<Line> m_walls;
 
     void addLauncher(Vec2 at, Vec2 facing);
 
