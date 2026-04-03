@@ -58,8 +58,10 @@ namespace {
                 if (SDL_GameControllerGetAttached(joy)) {
                     double val = double(SDL_GameControllerGetAxis(joy, axis)) / 32767;
                     f = std::fmax(f, (val - bottom)/dy);
+                    SDL_GameControllerClose(joy);
                 }
             }
+            if (f < deadzone()) f = 0;
             return f;
         }
 

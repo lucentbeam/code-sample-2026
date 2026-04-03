@@ -38,6 +38,6 @@ void GameOver::draw(FSM &fsm)
     settings.y_sorted = false;
     Window::setDrawSettings(settings);
 
-    Window::print("GAMEOVER", resolution_x/2 - 50, resolution_y/2 - 12, 2);
+    Window::print("GAME OVER", resolution_x/2 - 50, resolution_y/2 - 12, 2);
     Window::print("final score: " + std::to_string(GameState::score()), resolution_x * 0.35, resolution_y/2 + 30);
 }
